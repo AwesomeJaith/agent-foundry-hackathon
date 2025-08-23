@@ -29,6 +29,8 @@ import {
   MapPin,
   Plus,
   Edit,
+  Sparkles,
+  CheckCircle,
 } from "lucide-react";
 
 export default function PatientDetailsPage() {
@@ -46,7 +48,7 @@ export default function PatientDetailsPage() {
             Patient Not Found
           </h1>
           <p className="text-gray-600 mb-4">
-            The patient you're looking for doesn't exist.
+            The patient you&apos;re looking for doesn&apos;t exist.
           </p>
           <Button onClick={() => router.back()}>Go Back</Button>
         </div>
@@ -83,6 +85,14 @@ export default function PatientDetailsPage() {
       age--;
     }
     return age;
+  };
+
+  const handleMarkAsAddressed = (reportId: string) => {
+    // In a real application, this would update the database
+    // For now, we'll just show an alert
+    alert(
+      `Issue ${reportId} marked as addressed. In a real application, this would update the database.`
+    );
   };
 
   return (
@@ -131,6 +141,305 @@ export default function PatientDetailsPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Mobile/Tablet: AI Summary and Recent Issue Cards */}
+          <div className="lg:hidden space-y-6">
+            {/* AI Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Sparkles className="h-5 w-5" />
+                  <span>AI Summary</span>
+                </CardTitle>
+                <CardDescription>
+                  A quick summary of the patient&apos;s most urgent needs
+                  gathered by AI
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>{patient.aiSummary || "No AI summary available"}</p>
+              </CardContent>
+            </Card>
+
+            {/* Recent Patient Issue */}
+            {patient.symptomReports && patient.symptomReports.length > 0 ? (
+              (() => {
+                // Separate unaddressed and addressed issues
+                const unaddressedReports = patient.symptomReports.filter(
+                  (report) =>
+                    report.status !== "addressed" &&
+                    report.status !== "resolved"
+                );
+                const addressedReports = patient.symptomReports.filter(
+                  (report) =>
+                    report.status === "addressed" ||
+                    report.status === "resolved"
+                );
+
+                // Show unaddressed issues first, then most recent addressed issue
+                const displayReport =
+                  unaddressedReports.length > 0
+                    ? unaddressedReports[0]
+                    : addressedReports[0];
+
+                if (!displayReport) {
+                  return (
+                    <Card className="border-gray-200 bg-gray-50/30">
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <AlertTriangle className="h-5 w-5 text-gray-400" />
+                          <span>No Issues</span>
+                        </CardTitle>
+                        <CardDescription>
+                          No symptom reports recorded
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-500 text-sm">
+                          No patient issues or symptom reports have been
+                          recorded.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                }
+
+                const reportDate = new Date(displayReport.timestamp);
+                const daysAgo = Math.floor(
+                  (new Date().getTime() - reportDate.getTime()) /
+                    (1000 * 60 * 60 * 24)
+                );
+
+                const isAddressed =
+                  displayReport.status === "addressed" ||
+                  displayReport.status === "resolved";
+
+                return (
+                  <Card
+                    className={`${
+                      isAddressed
+                        ? "border-green-200 bg-green-50/30"
+                        : displayReport.aiAnalysis?.urgency === "urgent"
+                        ? "border-red-300 bg-red-50/30"
+                        : displayReport.aiAnalysis?.urgency === "high"
+                        ? "border-orange-300 bg-orange-50/30"
+                        : "border-yellow-200 bg-yellow-50/30"
+                    }`}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <AlertTriangle
+                          className={`h-5 w-5 ${
+                            isAddressed ? "text-green-600" : "text-orange-600"
+                          }`}
+                        />
+                        <span>
+                          {isAddressed
+                            ? "Past Patient Issue"
+                            : "Recent Patient Issue"}
+                        </span>
+                        <Badge
+                          variant={
+                            displayReport.status === "new"
+                              ? "destructive"
+                              : displayReport.status === "addressed" ||
+                                displayReport.status === "resolved"
+                              ? "default"
+                              : "secondary"
+                          }
+                          className={`ml-auto ${
+                            isAddressed ? "bg-green-100 text-green-800" : ""
+                          }`}
+                        >
+                          {displayReport.status === "new"
+                            ? "New"
+                            : displayReport.status === "addressed"
+                            ? "Addressed"
+                            : displayReport.status === "resolved"
+                            ? "Resolved"
+                            : displayReport.status.replace("_", " ")}
+                        </Badge>
+                      </CardTitle>
+                      <CardDescription>
+                        {isAddressed
+                          ? "Previously addressed issue"
+                          : "Most recently reported issue requiring attention"}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div
+                        className={`p-4 rounded-lg border ${
+                          isAddressed
+                            ? "bg-white border-green-200"
+                            : "bg-white border-orange-200"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <h4 className="font-semibold text-gray-900">
+                            Reported Symptoms
+                          </h4>
+                          <Badge
+                            variant="outline"
+                            className={
+                              isAddressed
+                                ? "text-green-700 border-green-300"
+                                : "text-orange-700 border-orange-300"
+                            }
+                          >
+                            Reported {daysAgo} {daysAgo === 1 ? "day" : "days"}{" "}
+                            ago
+                          </Badge>
+                        </div>
+                        <div className="space-y-2">
+                          {displayReport.symptoms.map(
+                            (
+                              symptom: {
+                                description: string;
+                                severity: string;
+                                duration?: string;
+                              },
+                              index: number
+                            ) => (
+                              <div
+                                key={index}
+                                className="flex items-center space-x-2"
+                              >
+                                <div
+                                  className={`w-2 h-2 rounded-full ${
+                                    symptom.severity === "critical"
+                                      ? "bg-red-500"
+                                      : symptom.severity === "severe"
+                                      ? "bg-orange-500"
+                                      : symptom.severity === "moderate"
+                                      ? "bg-yellow-500"
+                                      : "bg-green-500"
+                                  }`}
+                                ></div>
+                                <span className="text-sm">
+                                  {symptom.description}
+                                  {symptom.duration && ` (${symptom.duration})`}
+                                </span>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+
+                      {displayReport.aiAnalysis && (
+                        <div
+                          className={`p-4 rounded-lg border ${
+                            isAddressed
+                              ? "bg-green-50 border-green-200"
+                              : "bg-blue-50 border-blue-200"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-gray-900">
+                              AI Analysis
+                            </h4>
+                            <Badge
+                              variant="outline"
+                              className={
+                                isAddressed
+                                  ? "text-green-700 border-green-300"
+                                  : "text-blue-700 border-blue-300"
+                              }
+                            >
+                              {displayReport.aiAnalysis.confidence}% confidence
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-3">
+                            {displayReport.aiAnalysis.summary}
+                          </p>
+                          <h5 className="font-medium text-gray-900 mb-2">
+                            Suggested Next Steps
+                          </h5>
+                          <div className="space-y-2">
+                            {displayReport.aiAnalysis.suggestedActions.map(
+                              (action: string, index: number) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center space-x-2"
+                                >
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                  <span className="text-sm">{action}</span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap gap-2">
+                        {displayReport.attachments?.map(
+                          (
+                            attachment: {
+                              type: string;
+                              url: string;
+                              description: string;
+                            },
+                            index: number
+                          ) => (
+                            <Button
+                              key={index}
+                              variant="outline"
+                              size="sm"
+                              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                            >
+                              <FileText className="h-4 w-4 mr-2" />
+                              {attachment.description}
+                            </Button>
+                          )
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-green-600 border-green-300 hover:bg-green-50"
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          Phone History
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                        >
+                          <Mail className="h-4 w-4 mr-2" />
+                          Email History
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                        >
+                          <Activity className="h-4 w-4 mr-2" />
+                          Visit Notes
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })()
+            ) : (
+              <Card className="border-gray-200 bg-gray-50/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <AlertTriangle className="h-5 w-5 text-gray-400" />
+                    <span>No Recent Issues</span>
+                  </CardTitle>
+                  <CardDescription>
+                    No symptom reports requiring attention
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500 text-sm">
+                    No recent patient issues or symptom reports have been
+                    recorded.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
           {/* Left Column - Basic Info & Quick Actions */}
           <div className="lg:col-span-1 space-y-6">
             {/* Basic Information */}
@@ -279,6 +588,320 @@ export default function PatientDetailsPage() {
 
           {/* Right Column - Detailed Information */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Desktop: AI Summary and Recent Issue Cards */}
+            <div className="hidden lg:block space-y-6">
+              {/* AI Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Sparkles className="h-5 w-5" />
+                    <span>AI Summary</span>
+                  </CardTitle>
+                  <CardDescription>
+                    A quick summary of the patient&apos;s most urgent needs
+                    gathered by AI
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>{patient.aiSummary || "No AI summary available"}</p>
+                </CardContent>
+              </Card>
+
+              {/* Recent Patient Issue */}
+              {patient.symptomReports && patient.symptomReports.length > 0 ? (
+                (() => {
+                  // Separate unaddressed and addressed issues
+                  const unaddressedReports = patient.symptomReports.filter(
+                    (report) =>
+                      report.status !== "addressed" &&
+                      report.status !== "resolved"
+                  );
+                  const addressedReports = patient.symptomReports.filter(
+                    (report) =>
+                      report.status === "addressed" ||
+                      report.status === "resolved"
+                  );
+
+                  // Show unaddressed issues first, then most recent addressed issue
+                  const displayReport =
+                    unaddressedReports.length > 0
+                      ? unaddressedReports[0]
+                      : addressedReports[0];
+
+                  if (!displayReport) {
+                    return (
+                      <Card className="border-gray-200 bg-gray-50/30">
+                        <CardHeader>
+                          <CardTitle className="flex items-center space-x-2">
+                            <AlertTriangle className="h-5 w-5 text-gray-400" />
+                            <span>No Issues</span>
+                          </CardTitle>
+                          <CardDescription>
+                            No symptom reports recorded
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-500 text-sm">
+                            No patient issues or symptom reports have been
+                            recorded.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    );
+                  }
+
+                  const reportDate = new Date(displayReport.timestamp);
+                  const daysAgo = Math.floor(
+                    (new Date().getTime() - reportDate.getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  );
+
+                  const isAddressed =
+                    displayReport.status === "addressed" ||
+                    displayReport.status === "resolved";
+
+                  return (
+                    <Card
+                      className={`${
+                        isAddressed
+                          ? "border-green-200 bg-green-50/30"
+                          : displayReport.aiAnalysis?.urgency === "urgent"
+                          ? "border-red-300 bg-red-50/30"
+                          : displayReport.aiAnalysis?.urgency === "high"
+                          ? "border-orange-300 bg-orange-50/30"
+                          : "border-yellow-200 bg-yellow-50/30"
+                      }`}
+                    >
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <AlertTriangle
+                            className={`h-5 w-5 ${
+                              isAddressed ? "text-green-600" : "text-orange-600"
+                            }`}
+                          />
+                          <span>
+                            {isAddressed
+                              ? "Past Patient Issue"
+                              : "Recent Patient Issue"}
+                          </span>
+                          <Badge
+                            variant={
+                              displayReport.status === "new"
+                                ? "destructive"
+                                : displayReport.status === "addressed" ||
+                                  displayReport.status === "resolved"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className={`ml-auto ${
+                              isAddressed ? "bg-green-100 text-green-800" : ""
+                            }`}
+                          >
+                            {displayReport.status === "new"
+                              ? "New"
+                              : displayReport.status === "addressed"
+                              ? "Addressed"
+                              : displayReport.status === "resolved"
+                              ? "Resolved"
+                              : displayReport.status.replace("_", " ")}
+                          </Badge>
+                        </CardTitle>
+                        <CardDescription>
+                          {isAddressed
+                            ? "Previously addressed issue"
+                            : "Most recently reported issue requiring attention"}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div
+                          className={`p-4 rounded-lg border ${
+                            isAddressed
+                              ? "bg-white border-green-200"
+                              : "bg-white border-orange-200"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <h4 className="font-semibold text-gray-900">
+                              Reported Symptoms
+                            </h4>
+                            <Badge
+                              variant="outline"
+                              className={
+                                isAddressed
+                                  ? "text-green-700 border-green-300"
+                                  : "text-orange-700 border-orange-300"
+                              }
+                            >
+                              Reported {daysAgo}{" "}
+                              {daysAgo === 1 ? "day" : "days"} ago
+                            </Badge>
+                          </div>
+                          <div className="space-y-2">
+                            {displayReport.symptoms.map(
+                              (
+                                symptom: {
+                                  description: string;
+                                  severity: string;
+                                  duration?: string;
+                                },
+                                index: number
+                              ) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center space-x-2"
+                                >
+                                  <div
+                                    className={`w-2 h-2 rounded-full ${
+                                      symptom.severity === "critical"
+                                        ? "bg-red-500"
+                                        : symptom.severity === "severe"
+                                        ? "bg-orange-500"
+                                        : symptom.severity === "moderate"
+                                        ? "bg-yellow-500"
+                                        : "bg-green-500"
+                                    }`}
+                                  ></div>
+                                  <span className="text-sm">
+                                    {symptom.description}
+                                    {symptom.duration &&
+                                      ` (${symptom.duration})`}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+
+                        {displayReport.aiAnalysis && (
+                          <div
+                            className={`p-4 rounded-lg border ${
+                              isAddressed
+                                ? "bg-green-50 border-green-200"
+                                : "bg-blue-50 border-blue-200"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-900">
+                                AI Analysis
+                              </h4>
+                              <Badge
+                                variant="outline"
+                                className={
+                                  isAddressed
+                                    ? "text-green-700 border-green-300"
+                                    : "text-blue-700 border-blue-300"
+                                }
+                              >
+                                {displayReport.aiAnalysis.confidence}%
+                                confidence
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-3">
+                              {displayReport.aiAnalysis.summary}
+                            </p>
+                            <h5 className="font-medium text-gray-900 mb-2">
+                              Suggested Next Steps
+                            </h5>
+                            <div className="space-y-2">
+                              {displayReport.aiAnalysis.suggestedActions.map(
+                                (action: string, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center space-x-2"
+                                  >
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <span className="text-sm">{action}</span>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap gap-2">
+                          {displayReport.attachments?.map(
+                            (
+                              attachment: {
+                                type: string;
+                                url: string;
+                                description: string;
+                              },
+                              index: number
+                            ) => (
+                              <Button
+                                key={index}
+                                variant="outline"
+                                size="sm"
+                                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                              >
+                                <FileText className="h-4 w-4 mr-2" />
+                                {attachment.description}
+                              </Button>
+                            )
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-green-600 border-green-300 hover:bg-green-50"
+                          >
+                            <Phone className="h-4 w-4 mr-2" />
+                            Phone History
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                          >
+                            <Mail className="h-4 w-4 mr-2" />
+                            Email History
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                          >
+                            <Activity className="h-4 w-4 mr-2" />
+                            Visit Notes
+                          </Button>
+                          {!isAddressed && (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                              onClick={() =>
+                                handleMarkAsAddressed(displayReport.id)
+                              }
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Mark as Addressed
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })()
+              ) : (
+                <Card className="border-gray-200 bg-gray-50/30">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <AlertTriangle className="h-5 w-5 text-gray-400" />
+                      <span>No Recent Issues</span>
+                    </CardTitle>
+                    <CardDescription>
+                      No symptom reports requiring attention
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-500 text-sm">
+                      No recent patient issues or symptom reports have been
+                      recorded.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
             {/* Insurance & Payment Information */}
             <Card>
               <CardHeader>
