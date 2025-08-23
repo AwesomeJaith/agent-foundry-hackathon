@@ -147,125 +147,186 @@ export default function PatientDetailsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>
-                  Patient shows signs of mild anxiety and stress-related
-                  symptoms. Recommended follow-up in 2 weeks.
-                </p>
+                <p>{patient.aiSummary || "No AI summary available"}</p>
               </CardContent>
             </Card>
 
             {/* Recent Patient Issue */}
-            <Card className="border-orange-200 bg-orange-50/30">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <AlertTriangle className="h-5 w-5 text-orange-600" />
-                  <span>Recent Patient Issue</span>
-                  <Badge variant="destructive" className="ml-auto">
-                    New
-                  </Badge>
-                </CardTitle>
-                <CardDescription>
-                  Most recently reported issue requiring attention gathered by
-                  AI
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-white p-4 rounded-lg border border-orange-200">
-                  <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-semibold text-gray-900">
-                      Reported Symptoms
-                    </h4>
-                    <Badge
-                      variant="outline"
-                      className="text-orange-700 border-orange-300"
-                    >
-                      Reported 2 days ago
-                    </Badge>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <span className="text-sm">
-                        Persistent headaches for the past week
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <span className="text-sm">
-                        Difficulty sleeping (4-5 hours per night)
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <span className="text-sm">
-                        Increased stress and anxiety levels
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            {patient.symptomReports && patient.symptomReports.length > 0 ? (
+              (() => {
+                const latestReport = patient.symptomReports[0]; // Most recent report
+                const reportDate = new Date(latestReport.timestamp);
+                const daysAgo = Math.floor(
+                  (new Date().getTime() - reportDate.getTime()) /
+                    (1000 * 60 * 60 * 24)
+                );
 
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-gray-900 mb-3">
-                    Suggested Next Steps
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm">
-                        Schedule follow-up appointment within 1 week
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm">
-                        Consider stress management techniques
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm">
-                        Monitor sleep patterns and document changes
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                return (
+                  <Card
+                    className={`border-orange-200 bg-orange-50/30 ${
+                      latestReport.aiAnalysis?.urgency === "urgent"
+                        ? "border-red-300 bg-red-50/30"
+                        : latestReport.aiAnalysis?.urgency === "high"
+                        ? "border-orange-300 bg-orange-50/30"
+                        : "border-yellow-200 bg-yellow-50/30"
+                    }`}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <AlertTriangle className="h-5 w-5 text-orange-600" />
+                        <span>Recent Patient Issue</span>
+                        <Badge
+                          variant={
+                            latestReport.status === "new"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                          className="ml-auto"
+                        >
+                          {latestReport.status === "new"
+                            ? "New"
+                            : latestReport.status.replace("_", " ")}
+                        </Badge>
+                      </CardTitle>
+                      <CardDescription>
+                        Most recently reported issue requiring attention
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="bg-white p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start justify-between mb-3">
+                          <h4 className="font-semibold text-gray-900">
+                            Reported Symptoms
+                          </h4>
+                          <Badge
+                            variant="outline"
+                            className="text-orange-700 border-orange-300"
+                          >
+                            Reported {daysAgo} {daysAgo === 1 ? "day" : "days"}{" "}
+                            ago
+                          </Badge>
+                        </div>
+                        <div className="space-y-2">
+                          {latestReport.symptoms.map((symptom, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-2"
+                            >
+                              <div
+                                className={`w-2 h-2 rounded-full ${
+                                  symptom.severity === "critical"
+                                    ? "bg-red-500"
+                                    : symptom.severity === "severe"
+                                    ? "bg-orange-500"
+                                    : symptom.severity === "moderate"
+                                    ? "bg-yellow-500"
+                                    : "bg-green-500"
+                                }`}
+                              ></div>
+                              <span className="text-sm">
+                                {symptom.description}
+                                {symptom.duration && ` (${symptom.duration})`}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Chat Transcripts
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-green-600 border-green-300 hover:bg-green-50"
-                  >
-                    <Phone className="h-4 w-4 mr-2" />
-                    Phone History
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-purple-600 border-purple-300 hover:bg-purple-50"
-                  >
-                    <Mail className="h-4 w-4 mr-2" />
-                    Email History
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                  >
-                    <Activity className="h-4 w-4 mr-2" />
-                    Visit Notes
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                      {latestReport.aiAnalysis && (
+                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-semibold text-gray-900">
+                              AI Analysis
+                            </h4>
+                            <Badge
+                              variant="outline"
+                              className="text-blue-700 border-blue-300"
+                            >
+                              {latestReport.aiAnalysis.confidence}% confidence
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-3">
+                            {latestReport.aiAnalysis.summary}
+                          </p>
+                          <h5 className="font-medium text-gray-900 mb-2">
+                            Suggested Next Steps
+                          </h5>
+                          <div className="space-y-2">
+                            {latestReport.aiAnalysis.suggestedActions.map(
+                              (action, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center space-x-2"
+                                >
+                                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                  <span className="text-sm">{action}</span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap gap-2">
+                        {latestReport.attachments?.map((attachment, index) => (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            {attachment.description}
+                          </Button>
+                        ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-green-600 border-green-300 hover:bg-green-50"
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          Phone History
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                        >
+                          <Mail className="h-4 w-4 mr-2" />
+                          Email History
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                        >
+                          <Activity className="h-4 w-4 mr-2" />
+                          Visit Notes
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })()
+            ) : (
+              <Card className="border-gray-200 bg-gray-50/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <AlertTriangle className="h-5 w-5 text-gray-400" />
+                    <span>No Recent Issues</span>
+                  </CardTitle>
+                  <CardDescription>
+                    No symptom reports requiring attention
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500 text-sm">
+                    No recent patient issues or symptom reports have been
+                    recorded.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Left Column - Basic Info & Quick Actions */}
@@ -431,124 +492,188 @@ export default function PatientDetailsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    Patient shows signs of mild anxiety and stress-related
-                    symptoms. Recommended follow-up in 2 weeks.
-                  </p>
+                  <p>{patient.aiSummary || "No AI summary available"}</p>
                 </CardContent>
               </Card>
 
               {/* Recent Patient Issue */}
-              <Card className="border-orange-200 bg-orange-50/30">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-600" />
-                    <span>Recent Patient Issue</span>
-                    <Badge variant="destructive" className="ml-auto">
-                      New
-                    </Badge>
-                  </CardTitle>
-                  <CardDescription>
-                    Most recently reported issue requiring attention
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="bg-white p-4 rounded-lg border border-orange-200">
-                    <div className="flex items-start justify-between mb-3">
-                      <h4 className="font-semibold text-gray-900">
-                        Reported Symptoms
-                      </h4>
-                      <Badge
-                        variant="outline"
-                        className="text-orange-700 border-orange-300"
-                      >
-                        Reported 2 days ago
-                      </Badge>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                        <span className="text-sm">
-                          Persistent headaches for the past week
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                        <span className="text-sm">
-                          Difficulty sleeping (4-5 hours per night)
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                        <span className="text-sm">
-                          Increased stress and anxiety levels
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+              {patient.symptomReports && patient.symptomReports.length > 0 ? (
+                (() => {
+                  const latestReport = patient.symptomReports[0]; // Most recent report
+                  const reportDate = new Date(latestReport.timestamp);
+                  const daysAgo = Math.floor(
+                    (new Date().getTime() - reportDate.getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  );
 
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-gray-900 mb-3">
-                      Suggested Next Steps
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-sm">
-                          Schedule follow-up appointment within 1 week
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-sm">
-                          Consider stress management techniques
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-sm">
-                          Monitor sleep patterns and document changes
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  return (
+                    <Card
+                      className={`border-orange-200 bg-orange-50/30 ${
+                        latestReport.aiAnalysis?.urgency === "urgent"
+                          ? "border-red-300 bg-red-50/30"
+                          : latestReport.aiAnalysis?.urgency === "high"
+                          ? "border-orange-300 bg-orange-50/30"
+                          : "border-yellow-200 bg-yellow-50/30"
+                      }`}
+                    >
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <AlertTriangle className="h-5 w-5 text-orange-600" />
+                          <span>Recent Patient Issue</span>
+                          <Badge
+                            variant={
+                              latestReport.status === "new"
+                                ? "destructive"
+                                : "secondary"
+                            }
+                            className="ml-auto"
+                          >
+                            {latestReport.status === "new"
+                              ? "New"
+                              : latestReport.status.replace("_", " ")}
+                          </Badge>
+                        </CardTitle>
+                        <CardDescription>
+                          Most recently reported issue requiring attention
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="bg-white p-4 rounded-lg border border-orange-200">
+                          <div className="flex items-start justify-between mb-3">
+                            <h4 className="font-semibold text-gray-900">
+                              Reported Symptoms
+                            </h4>
+                            <Badge
+                              variant="outline"
+                              className="text-orange-700 border-orange-300"
+                            >
+                              Reported {daysAgo}{" "}
+                              {daysAgo === 1 ? "day" : "days"} ago
+                            </Badge>
+                          </div>
+                          <div className="space-y-2">
+                            {latestReport.symptoms.map((symptom, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center space-x-2"
+                              >
+                                <div
+                                  className={`w-2 h-2 rounded-full ${
+                                    symptom.severity === "critical"
+                                      ? "bg-red-500"
+                                      : symptom.severity === "severe"
+                                      ? "bg-orange-500"
+                                      : symptom.severity === "moderate"
+                                      ? "bg-yellow-500"
+                                      : "bg-green-500"
+                                  }`}
+                                ></div>
+                                <span className="text-sm">
+                                  {symptom.description}
+                                  {symptom.duration && ` (${symptom.duration})`}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      Chat Transcripts
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-green-600 border-green-300 hover:bg-green-50"
-                    >
-                      <Phone className="h-4 w-4 mr-2" />
-                      Phone History
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-purple-600 border-purple-300 hover:bg-purple-50"
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      Email History
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                    >
-                      <Activity className="h-4 w-4 mr-2" />
-                      Visit Notes
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                        {latestReport.aiAnalysis && (
+                          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-semibold text-gray-900">
+                                AI Analysis
+                              </h4>
+                              <Badge
+                                variant="outline"
+                                className="text-blue-700 border-blue-300"
+                              >
+                                {latestReport.aiAnalysis.confidence}% confidence
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-3">
+                              {latestReport.aiAnalysis.summary}
+                            </p>
+                            <h5 className="font-medium text-gray-900 mb-2">
+                              Suggested Next Steps
+                            </h5>
+                            <div className="space-y-2">
+                              {latestReport.aiAnalysis.suggestedActions.map(
+                                (action, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center space-x-2"
+                                  >
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <span className="text-sm">{action}</span>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap gap-2">
+                          {latestReport.attachments?.map(
+                            (attachment, index) => (
+                              <Button
+                                key={index}
+                                variant="outline"
+                                size="sm"
+                                className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                              >
+                                <FileText className="h-4 w-4 mr-2" />
+                                {attachment.description}
+                              </Button>
+                            )
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-green-600 border-green-300 hover:bg-green-50"
+                          >
+                            <Phone className="h-4 w-4 mr-2" />
+                            Phone History
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                          >
+                            <Mail className="h-4 w-4 mr-2" />
+                            Email History
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                          >
+                            <Activity className="h-4 w-4 mr-2" />
+                            Visit Notes
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })()
+              ) : (
+                <Card className="border-gray-200 bg-gray-50/30">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <AlertTriangle className="h-5 w-5 text-gray-400" />
+                      <span>No Recent Issues</span>
+                    </CardTitle>
+                    <CardDescription>
+                      No symptom reports requiring attention
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-500 text-sm">
+                      No recent patient issues or symptom reports have been
+                      recorded.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Insurance & Payment Information */}

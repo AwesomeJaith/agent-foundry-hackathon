@@ -1,3 +1,32 @@
+export interface SymptomReport {
+  id: string;
+  timestamp: string;
+  reportedBy: "patient" | "ai" | "caregiver" | "doctor";
+  source: "chat" | "phone" | "email" | "visit" | "ai_analysis";
+  symptoms: {
+    description: string;
+    severity: "mild" | "moderate" | "severe" | "critical";
+    duration?: string;
+    frequency?: string;
+    triggers?: string[];
+  }[];
+  aiAnalysis?: {
+    summary: string;
+    urgency: "low" | "medium" | "high" | "urgent";
+    suggestedActions: string[];
+    confidence: number; // 0-100
+    relatedConditions?: string[];
+  };
+  status: "new" | "reviewed" | "in_progress" | "resolved";
+  assignedTo?: string;
+  notes?: string;
+  attachments?: {
+    type: "transcript" | "recording" | "document" | "image";
+    url: string;
+    description: string;
+  }[];
+}
+
 export interface Patient {
   id: string;
   firstName: string;
@@ -26,6 +55,8 @@ export interface Patient {
   conditions?: string[];
   lastVisit?: string;
   nextAppointment?: string;
+  symptomReports?: SymptomReport[];
+  aiSummary?: string;
 }
 
 export const patientsDatabase: Patient[] = [
@@ -61,6 +92,67 @@ export const patientsDatabase: Patient[] = [
     conditions: ["Asthma", "Seasonal allergies"],
     lastVisit: "2024-01-15",
     nextAppointment: "2024-03-20",
+    aiSummary:
+      "Patient shows signs of mild anxiety and stress-related symptoms. Recommended follow-up in 2 weeks.",
+    symptomReports: [
+      {
+        id: "sr-001",
+        timestamp: "2024-03-18T10:30:00Z",
+        reportedBy: "ai",
+        source: "ai_analysis",
+        symptoms: [
+          {
+            description: "Persistent headaches for the past week",
+            severity: "moderate",
+            duration: "7 days",
+            frequency: "Daily",
+            triggers: ["Stress", "Screen time"],
+          },
+          {
+            description: "Difficulty sleeping (4-5 hours per night)",
+            severity: "moderate",
+            duration: "2 weeks",
+            frequency: "Every night",
+            triggers: ["Anxiety", "Work stress"],
+          },
+          {
+            description: "Increased stress and anxiety levels",
+            severity: "moderate",
+            duration: "3 weeks",
+            frequency: "Continuous",
+            triggers: ["Work pressure", "Personal issues"],
+          },
+        ],
+        aiAnalysis: {
+          summary:
+            "Patient exhibiting symptoms consistent with stress-related anxiety and sleep disturbances. Headaches appear to be tension-related.",
+          urgency: "medium",
+          suggestedActions: [
+            "Schedule follow-up appointment within 1 week",
+            "Consider stress management techniques",
+            "Monitor sleep patterns and document changes",
+            "Evaluate work-life balance",
+          ],
+          confidence: 85,
+          relatedConditions: [
+            "Anxiety",
+            "Sleep disorders",
+            "Tension headaches",
+          ],
+        },
+        status: "new",
+        assignedTo: "Dr. Smith",
+        notes:
+          "Patient has history of seasonal allergies but current symptoms appear stress-related.",
+        attachments: [
+          {
+            type: "transcript",
+            url: "/transcripts/emily-johnson-2024-03-18",
+            description: "Chat conversation with patient",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "2",
@@ -90,6 +182,56 @@ export const patientsDatabase: Patient[] = [
     conditions: ["Hypertension"],
     lastVisit: "2024-02-10",
     nextAppointment: "2024-05-15",
+    aiSummary:
+      "Patient's blood pressure readings show slight elevation. Monitoring recommended.",
+    symptomReports: [
+      {
+        id: "sr-002",
+        timestamp: "2024-03-17T14:20:00Z",
+        reportedBy: "patient",
+        source: "phone",
+        symptoms: [
+          {
+            description: "Elevated blood pressure readings",
+            severity: "mild",
+            duration: "3 days",
+            frequency: "Daily readings",
+            triggers: ["Stress", "Caffeine"],
+          },
+          {
+            description: "Mild dizziness when standing",
+            severity: "mild",
+            duration: "2 days",
+            frequency: "Occasional",
+            triggers: ["Rapid position changes"],
+          },
+        ],
+        aiAnalysis: {
+          summary:
+            "Patient reporting elevated BP readings above normal range. Symptoms consistent with mild hypertension.",
+          urgency: "medium",
+          suggestedActions: [
+            "Verify blood pressure readings with office visit",
+            "Review current medication effectiveness",
+            "Recommend lifestyle modifications",
+            "Schedule follow-up within 1 week",
+          ],
+          confidence: 78,
+          relatedConditions: ["Hypertension", "Orthostatic hypotension"],
+        },
+        status: "reviewed",
+        assignedTo: "Dr. Johnson",
+        notes:
+          "Patient has been on Lisinopril for 6 months. May need dosage adjustment.",
+        attachments: [
+          {
+            type: "recording",
+            url: "/recordings/michael-anderson-2024-03-17",
+            description: "Phone call recording",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "3",
@@ -123,6 +265,69 @@ export const patientsDatabase: Patient[] = [
     conditions: ["Migraines", "Anxiety"],
     lastVisit: "2024-01-30",
     nextAppointment: "2024-04-12",
+    aiSummary:
+      "Patient experiencing increased migraine frequency. Current medication may need adjustment.",
+    symptomReports: [
+      {
+        id: "sr-003",
+        timestamp: "2024-03-19T09:15:00Z",
+        reportedBy: "ai",
+        source: "chat",
+        symptoms: [
+          {
+            description: "Severe migraine with aura",
+            severity: "severe",
+            duration: "6 hours",
+            frequency: "3 times this week",
+            triggers: ["Stress", "Bright lights", "Lack of sleep"],
+          },
+          {
+            description: "Nausea and vomiting",
+            severity: "moderate",
+            duration: "4 hours",
+            frequency: "With each migraine",
+            triggers: ["Severe headache"],
+          },
+          {
+            description: "Sensitivity to light and sound",
+            severity: "severe",
+            duration: "6 hours",
+            frequency: "With each migraine",
+            triggers: ["Migraine onset"],
+          },
+        ],
+        aiAnalysis: {
+          summary:
+            "Patient experiencing severe migraine episodes with classic aura symptoms. Frequency has increased significantly.",
+          urgency: "high",
+          suggestedActions: [
+            "Immediate medication review and adjustment",
+            "Consider preventive migraine medication",
+            "Schedule urgent follow-up appointment",
+            "Evaluate trigger factors and lifestyle modifications",
+            "Consider referral to neurologist if symptoms persist",
+          ],
+          confidence: 92,
+          relatedConditions: ["Migraine with aura", "Chronic migraine"],
+        },
+        status: "new",
+        assignedTo: "Dr. Williams",
+        notes:
+          "Patient has been on Sumatriptan but frequency suggests need for preventive treatment.",
+        attachments: [
+          {
+            type: "transcript",
+            url: "/transcripts/sophia-martinez-2024-03-19",
+            description: "Chat conversation with patient",
+          },
+          {
+            type: "document",
+            url: "/documents/sophia-martinez-migraine-log",
+            description: "Patient's migraine symptom log",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "4",
