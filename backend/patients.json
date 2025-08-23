@@ -1,77 +1,209 @@
 [
-    {
-      "id": "1",
-      "firstName": "Emily",
-      "lastName": "Johnson",
-      "dateOfBirth": "1990-05-12",
-      "gender": "female",
-      "phoneNumber": "555-123-4567",
-      "email": "emily.johnson@email.com",
-      "address": {
-        "street": "123 Oak Street",
-        "city": "Springfield",
-        "state": "IL",
-        "zipCode": "62701"
-      },
-      "insuranceProvider": "Blue Cross Blue Shield",
-      "memberId": "BCBS123456789",
-      "policyHolder": "Emily Johnson",
-      "paymentOption": "Insurance",
-      "phoneCalls": 3,
-      "emails": 2,
-      "familyHistory": "Father: Hypertension, Mother: Diabetes",
-      "medicalHistory": "Seasonal allergies, mild asthma",
-      "consentForms": [
-        "Treatment Consent",
-        "HIPAA Privacy Notice",
-        "Financial Agreement"
-      ],
-      "allergies": ["Penicillin", "Pollen"],
-      "medications": ["Albuterol inhaler", "Cetirizine"],
-      "conditions": ["Asthma", "Seasonal allergies"],
-      "lastVisit": "2024-01-15",
-      "nextAppointment": "2024-03-20",
-      "appointments": [
-        {
-          "when": "2024-03-20",
-          "doctor": "Dr. Smith",
-          "status": "completed"
-        }
-      ]
+  {
+    "id": "1",
+    "firstName": "Emily",
+    "lastName": "Johnson",
+    "dateOfBirth": "1990-05-12",
+    "gender": "female",
+    "phoneNumber": "555-123-4567",
+    "email": "emily.johnson@email.com",
+    "address": {
+      "street": "123 Oak Street",
+      "city": "Springfield",
+      "state": "IL",
+      "zipCode": "62701"
     },
-    {
-      "id": "2",
-      "firstName": "Alex",
-      "lastName": "Rivera",
-      "dateOfBirth": "1998-05-14",
-      "gender": "male",
-      "phoneNumber": "555-321-9876",
-      "email": "alex.rivera@email.com",
-      "address": {
-        "street": "456 Maple Avenue",
-        "city": "San Francisco",
-        "state": "CA",
-        "zipCode": "94102"
+    "insuranceProvider": "Blue Cross Blue Shield",
+    "memberId": "BCBS123456789",
+    "policyHolder": "Emily Johnson",
+    "paymentOption": "Insurance",
+    "phoneCalls": 3,
+    "emails": 2,
+    "familyHistory": "Father: Hypertension, Mother: Diabetes",
+    "medicalHistory": "Seasonal allergies, mild asthma",
+    "consentForms": [
+      "Treatment Consent",
+      "HIPAA Privacy Notice",
+      "Financial Agreement"
+    ],
+    "allergies": [
+      "Penicillin",
+      "Pollen"
+    ],
+    "medications": [
+      "Albuterol inhaler",
+      "Cetirizine"
+    ],
+    "conditions": [
+      "Asthma",
+      "Seasonal allergies",
+      "Initial lesions of yaws"
+    ],
+    "lastVisit": "2024-01-15",
+    "nextAppointment": "2024-03-20",
+    "appointments": [
+      {
+        "when": "2024-03-20",
+        "doctor": "Dr. Smith",
+        "status": "completed"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "firstName": "Alex",
+    "lastName": "Rivera",
+    "dateOfBirth": "1998-05-14",
+    "gender": "male",
+    "phoneNumber": "555-321-9876",
+    "email": "alex.rivera@email.com",
+    "address": {
+      "street": "456 Maple Avenue",
+      "city": "San Francisco",
+      "state": "CA",
+      "zipCode": "94102"
+    },
+    "insuranceProvider": "United Healthcare",
+    "memberId": "UHC654321987",
+    "policyHolder": "Alex Rivera",
+    "paymentOption": "Insurance",
+    "phoneCalls": 1,
+    "emails": 0,
+    "familyHistory": "Grandfather: Heart disease",
+    "medicalHistory": "No major conditions",
+    "consentForms": [
+      "Treatment Consent",
+      "HIPAA Privacy Notice"
+    ],
+    "allergies": [],
+    "medications": [],
+    "conditions": [],
+    "lastVisit": "2024-02-10",
+    "nextAppointment": null,
+    "appointments": []
+  },
+  {
+    "id": "3",
+    "firstName": "Bad,",
+    "lastName": "Heavy Fever",
+    "dateOfBirth": null,
+    "phoneNumber": null,
+    "email": null,
+    "address": {},
+    "insuranceProvider": null,
+    "memberId": null,
+    "policyHolder": "Bad, Heavy Fever",
+    "paymentOption": null,
+    "phoneCalls": 0,
+    "emails": 0,
+    "familyHistory": "",
+    "medicalHistory": "",
+    "consentForms": [],
+    "allergies": [],
+    "medications": [],
+    "conditions": [],
+    "lastVisit": null,
+    "nextAppointment": null,
+    "appointments": []
+  },
+  {
+    "id": "4",
+    "firstName": "Ezaz",
+    "lastName": "",
+    "dateOfBirth": null,
+    "phoneNumber": null,
+    "email": null,
+    "address": {},
+    "insuranceProvider": null,
+    "memberId": null,
+    "policyHolder": "Ezaz",
+    "paymentOption": null,
+    "phoneCalls": 0,
+    "emails": 0,
+    "familyHistory": "",
+    "medicalHistory": "",
+    "consentForms": [],
+    "allergies": [],
+    "medications": [],
+    "conditions": [],
+    "lastVisit": null,
+    "nextAppointment": "tomorrow 9pm",
+    "appointments": [
+      {
+        "when": "e upcoming days asap",
+        "doctor": "one upcoming",
+        "status": "booked"
       },
-      "insuranceProvider": "United Healthcare",
-      "memberId": "UHC654321987",
-      "policyHolder": "Alex Rivera",
-      "paymentOption": "Insurance",
-      "phoneCalls": 1,
-      "emails": 0,
-      "familyHistory": "Grandfather: Heart disease",
-      "medicalHistory": "No major conditions",
-      "consentForms": [
-        "Treatment Consent",
-        "HIPAA Privacy Notice"
-      ],
-      "allergies": [],
-      "medications": [],
-      "conditions": [],
-      "lastVisit": "2024-02-10",
-      "nextAppointment": null,
-      "appointments": []
-    }
-  ]
-
-  
+      {
+        "when": "tomorrow 9pm",
+        "doctor": null,
+        "status": "booked"
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "firstName": "Drake",
+    "lastName": "",
+    "dateOfBirth": null,
+    "phoneNumber": null,
+    "email": null,
+    "address": {},
+    "insuranceProvider": null,
+    "memberId": null,
+    "policyHolder": "Drake",
+    "paymentOption": null,
+    "phoneCalls": 0,
+    "emails": 0,
+    "familyHistory": "",
+    "medicalHistory": "",
+    "consentForms": [],
+    "allergies": [],
+    "medications": [],
+    "conditions": [
+      "Acute cough"
+    ],
+    "lastVisit": null,
+    "nextAppointment": "under drake",
+    "appointments": [
+      {
+        "when": "under drake",
+        "doctor": null,
+        "status": "booked"
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "firstName": "Zach",
+    "lastName": "",
+    "conditions": [],
+    "appointments": [
+      {
+        "when": "anytime tomorrow",
+        "doctor": null,
+        "status": "booked"
+      },
+      {
+        "when": "anytime tomorrow",
+        "doctor": null,
+        "status": "booked"
+      }
+    ],
+    "nextAppointment": "anytime tomorrow"
+  },
+  {
+    "id": "7",
+    "firstName": "Azaz",
+    "lastName": "E Za Z",
+    "conditions": [],
+    "appointments": [
+      {
+        "when": "tomorrow, 9AM",
+        "doctor": null,
+        "status": "booked"
+      }
+    ],
+    "nextAppointment": "tomorrow, 9AM"
+  }
+]
