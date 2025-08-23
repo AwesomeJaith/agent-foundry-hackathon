@@ -17,7 +17,7 @@ export interface SymptomReport {
     confidence: number; // 0-100
     relatedConditions?: string[];
   };
-  status: "new" | "reviewed" | "in_progress" | "resolved";
+  status: "new" | "reviewed" | "in_progress" | "resolved" | "addressed";
   assignedTo?: string;
   notes?: string;
   attachments?: {
@@ -152,6 +152,44 @@ export const patientsDatabase: Patient[] = [
           },
         ],
       },
+      {
+        id: "sr-001-past",
+        timestamp: "2024-02-15T14:20:00Z",
+        reportedBy: "patient",
+        source: "visit",
+        symptoms: [
+          {
+            description: "Seasonal allergy symptoms",
+            severity: "moderate",
+            duration: "2 weeks",
+            frequency: "Daily",
+            triggers: ["Pollen", "Dust"],
+          },
+        ],
+        aiAnalysis: {
+          summary:
+            "Patient experiencing typical seasonal allergy symptoms consistent with spring pollen exposure.",
+          urgency: "low",
+          suggestedActions: [
+            "Continue current allergy medication",
+            "Recommend air purifier for home",
+            "Schedule follow-up if symptoms worsen",
+          ],
+          confidence: 90,
+          relatedConditions: ["Seasonal allergies"],
+        },
+        status: "addressed",
+        assignedTo: "Dr. Smith",
+        notes:
+          "Prescribed Cetirizine 10mg daily. Symptoms resolved within 1 week.",
+        attachments: [
+          {
+            type: "document",
+            url: "/documents/emily-johnson-allergy-treatment-2024-02",
+            description: "Allergy treatment plan",
+          },
+        ],
+      },
     ],
   },
   {
@@ -219,10 +257,10 @@ export const patientsDatabase: Patient[] = [
           confidence: 78,
           relatedConditions: ["Hypertension", "Orthostatic hypotension"],
         },
-        status: "reviewed",
+        status: "addressed",
         assignedTo: "Dr. Johnson",
         notes:
-          "Patient has been on Lisinopril for 6 months. May need dosage adjustment.",
+          "Patient has been on Lisinopril for 6 months. Dosage adjusted to 15mg daily. Patient reports improvement in BP readings.",
         attachments: [
           {
             type: "recording",
