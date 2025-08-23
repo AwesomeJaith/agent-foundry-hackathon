@@ -29,6 +29,7 @@ import {
   MapPin,
   Plus,
   Edit,
+  Sparkles,
 } from "lucide-react";
 
 export default function PatientDetailsPage() {
@@ -131,6 +132,142 @@ export default function PatientDetailsPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Mobile/Tablet: AI Summary and Recent Issue Cards */}
+          <div className="lg:hidden space-y-6">
+            {/* AI Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Sparkles className="h-5 w-5" />
+                  <span>AI Summary</span>
+                </CardTitle>
+                <CardDescription>
+                  A quick summary of the patient&apos;s most urgent needs
+                  gathered by AI
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  Patient shows signs of mild anxiety and stress-related
+                  symptoms. Recommended follow-up in 2 weeks.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Recent Patient Issue */}
+            <Card className="border-orange-200 bg-orange-50/30">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-600" />
+                  <span>Recent Patient Issue</span>
+                  <Badge variant="destructive" className="ml-auto">
+                    New
+                  </Badge>
+                </CardTitle>
+                <CardDescription>
+                  Most recently reported issue requiring attention gathered by
+                  AI
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-white p-4 rounded-lg border border-orange-200">
+                  <div className="flex items-start justify-between mb-3">
+                    <h4 className="font-semibold text-gray-900">
+                      Reported Symptoms
+                    </h4>
+                    <Badge
+                      variant="outline"
+                      className="text-orange-700 border-orange-300"
+                    >
+                      Reported 2 days ago
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-sm">
+                        Persistent headaches for the past week
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-sm">
+                        Difficulty sleeping (4-5 hours per night)
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                      <span className="text-sm">
+                        Increased stress and anxiety levels
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-gray-900 mb-3">
+                    Suggested Next Steps
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm">
+                        Schedule follow-up appointment within 1 week
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm">
+                        Consider stress management techniques
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm">
+                        Monitor sleep patterns and document changes
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Chat Transcripts
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-green-600 border-green-300 hover:bg-green-50"
+                  >
+                    <Phone className="h-4 w-4 mr-2" />
+                    Phone History
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
+                    Email History
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                  >
+                    <Activity className="h-4 w-4 mr-2" />
+                    Visit Notes
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Left Column - Basic Info & Quick Actions */}
           <div className="lg:col-span-1 space-y-6">
             {/* Basic Information */}
@@ -279,6 +416,141 @@ export default function PatientDetailsPage() {
 
           {/* Right Column - Detailed Information */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Desktop: AI Summary and Recent Issue Cards */}
+            <div className="hidden lg:block space-y-6">
+              {/* AI Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Sparkles className="h-5 w-5" />
+                    <span>AI Summary</span>
+                  </CardTitle>
+                  <CardDescription>
+                    A quick summary of the patient&apos;s most urgent needs
+                    gathered by AI
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>
+                    Patient shows signs of mild anxiety and stress-related
+                    symptoms. Recommended follow-up in 2 weeks.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Recent Patient Issue */}
+              <Card className="border-orange-200 bg-orange-50/30">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <AlertTriangle className="h-5 w-5 text-orange-600" />
+                    <span>Recent Patient Issue</span>
+                    <Badge variant="destructive" className="ml-auto">
+                      New
+                    </Badge>
+                  </CardTitle>
+                  <CardDescription>
+                    Most recently reported issue requiring attention
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-white p-4 rounded-lg border border-orange-200">
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-gray-900">
+                        Reported Symptoms
+                      </h4>
+                      <Badge
+                        variant="outline"
+                        className="text-orange-700 border-orange-300"
+                      >
+                        Reported 2 days ago
+                      </Badge>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span className="text-sm">
+                          Persistent headaches for the past week
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span className="text-sm">
+                          Difficulty sleeping (4-5 hours per night)
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span className="text-sm">
+                          Increased stress and anxiety levels
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      Suggested Next Steps
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-sm">
+                          Schedule follow-up appointment within 1 week
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-sm">
+                          Consider stress management techniques
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-sm">
+                          Monitor sleep patterns and document changes
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      Chat Transcripts
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-green-600 border-green-300 hover:bg-green-50"
+                    >
+                      <Phone className="h-4 w-4 mr-2" />
+                      Phone History
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      Email History
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                    >
+                      <Activity className="h-4 w-4 mr-2" />
+                      Visit Notes
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Insurance & Payment Information */}
             <Card>
               <CardHeader>
