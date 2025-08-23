@@ -46,7 +46,7 @@ export default function PatientDetailsPage() {
             Patient Not Found
           </h1>
           <p className="text-gray-600 mb-4">
-            The patient you're looking for doesn't exist.
+            The patient you&apos;re looking for doesn&apos;t exist.
           </p>
           <Button onClick={() => router.back()}>Go Back</Button>
         </div>
