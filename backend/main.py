@@ -19,13 +19,21 @@ ctx = {
     "cache": {"last_symptom_text": None, "last_terms": []},
     "conversation_history": [],
     "audio_mode": False,
-    "audio_manager": None
+    "audio_manager": None,
+    "session_id": None,
+    "session_start": None,
+    "collected_intents": []
 }
 
 def say(s: str): 
     """Output response to user - text only (audio handled separately in async context)"""
     print(s.strip())
-    ctx["conversation_history"].append({"role": "assistant", "content": s.strip()})
+    from datetime import datetime
+    ctx["conversation_history"].append({
+        "role": "assistant", 
+        "content": s.strip(),
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    })
 
 async def speak_async(text: str):
     """Async wrapper for speaking text"""
@@ -36,7 +44,12 @@ async def speak_async(text: str):
 
 def log_user_input(text: str):
     """Log user input to conversation history"""
-    ctx["conversation_history"].append({"role": "user", "content": text})
+    from datetime import datetime
+    ctx["conversation_history"].append({
+        "role": "user", 
+        "content": text,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    })
 
 async def listen_for_input() -> str:
     """Listen for audio input and return transcribed text"""
@@ -61,6 +74,89 @@ async def listen_for_input() -> str:
         print(f"Audio input error: {e}")
         print("Falling back to text input...")
         return input("> ").strip()
+
+# -------- Conversation Transcript Management --------
+def initialize_session():
+    """Initialize a new conversation session"""
+    from datetime import datetime
+    import uuid
+    
+    ctx["session_id"] = f"session_{datetime.now().strftime('%Y_%m_%d_%H%M%S')}_{str(uuid.uuid4())[:8]}"
+    ctx["session_start"] = datetime.utcnow().isoformat() + "Z"
+    ctx["collected_intents"] = []
+    ctx["conversation_history"] = []
+
+def save_conversation_to_patient():
+    """Save the current conversation transcript to the patient's record"""
+    if not ctx["patient_id"] or not ctx["conversation_history"]:
+        return
+    
+    try:
+        patient = A.get_patient_by_id(ctx["patient_id"])
+        if not patient:
+            return
+        
+        # Create conversation session record
+        conversation_session = {
+            "sessionId": ctx["session_id"],
+            "timestamp": ctx["session_start"],
+            "transcript": ctx["conversation_history"].copy(),
+            "summary": generate_conversation_summary(),
+            "intents": list(set(ctx["collected_intents"])),  # Remove duplicates
+            "audioMode": ctx["audio_mode"]
+        }
+        
+        # Add to patient's conversation history
+        if "conversationHistory" not in patient:
+            patient["conversationHistory"] = []
+        
+        patient["conversationHistory"].append(conversation_session)
+        
+        # Keep only last 10 conversation sessions to prevent file bloat
+        if len(patient["conversationHistory"]) > 10:
+            patient["conversationHistory"] = patient["conversationHistory"][-10:]
+        
+        # Update patient record
+        A.update_patient(patient)
+        
+        print(f"[DEBUG] Conversation saved to patient {ctx['patient_name']}'s record")
+        
+    except Exception as e:
+        print(f"[ERROR] Failed to save conversation: {e}")
+
+def generate_conversation_summary() -> str:
+    """Generate a brief summary of the conversation"""
+    if not ctx["conversation_history"]:
+        return "No conversation"
+    
+    # Simple summary based on intents and key actions
+    summary_parts = []
+    
+    if "symptoms" in ctx["collected_intents"]:
+        summary_parts.append("reported symptoms")
+    
+    if "book_appointment" in ctx["collected_intents"]:
+        if ctx.get("patient_name"):
+            summary_parts.append(f"booked appointment for {ctx['patient_name']}")
+        else:
+            summary_parts.append("attempted appointment booking")
+    
+    if "cancel_appointment" in ctx["collected_intents"]:
+        summary_parts.append("canceled appointment")
+    
+    if "check_appointment" in ctx["collected_intents"]:
+        summary_parts.append("checked appointment status")
+    
+    if "identify" in ctx["collected_intents"]:
+        if ctx.get("patient_name"):
+            summary_parts.append(f"identified as {ctx['patient_name']}")
+        else:
+            summary_parts.append("provided identification")
+    
+    if summary_parts:
+        return f"Patient {', '.join(summary_parts)}"
+    else:
+        return "General conversation"
 
 # -------- Intent Classification --------
 def classify_intent(text: str) -> Dict[str, Any]:
@@ -444,6 +540,9 @@ def setup_audio_mode():
 # -------- Main Loop --------
 async def main_async():
     """Async main conversational loop with audio support"""
+    # Initialize conversation session
+    initialize_session()
+    
     # Ask user for input mode
     print("Welcome to the Medical Appointment AI!")
     print("Choose your input mode:")
@@ -493,6 +592,12 @@ async def main_async():
                 await audio.speak(farewell)
             else:
                 say(farewell)
+            
+            # Final save of conversation before exit
+            if ctx["patient_id"]:
+                save_conversation_to_patient()
+                print(f"[DEBUG] Final conversation saved for {ctx['patient_name']}")
+            
             break
         
         # Process the input with intelligent routing
@@ -520,6 +625,10 @@ async def process_user_input_async(text: str) -> bool:
     intent = intent_data.get("intent", "general_conversation")
     confidence = intent_data.get("confidence", 0.0)
     
+    # Collect intents for conversation summary
+    if intent not in ctx["collected_intents"]:
+        ctx["collected_intents"].append(intent)
+    
     # Debug info (can be removed in production)
     print(f"[DEBUG] Intent: {intent}, Confidence: {confidence:.2f}")
     
@@ -528,6 +637,10 @@ async def process_user_input_async(text: str) -> bool:
     
     # Handle the intent
     result = handler(text, intent_data)
+    
+    # Save conversation to patient record if patient is identified
+    if ctx["patient_id"]:
+        save_conversation_to_patient()
     
     # If in audio mode, speak the last response
     if ctx["audio_mode"] and len(ctx["conversation_history"]) > 0:
