@@ -5,6 +5,7 @@
 import json
 import re
 import time
+from datetime import datetime
 import asyncio
 import os
 from typing import Dict, Any, Optional, List, Callable
@@ -615,6 +616,62 @@ async def main_async():
     # Cleanup
     if ctx["audio_mode"]:
         audio.cleanup_audio()
+
+# -------- Transcript Processing Endpoint --------
+
+def process_transcript_endpoint(transcript: str, patient_id: str) -> Dict[str, Any]:
+    """
+    Process a conversation transcript and extract patient information and symptom reports.
+    This can be called from external systems or used for batch processing.
+    """
+    try:
+        # Use the extraction agent to process the transcript
+        result = A.extract_and_save_from_transcript(transcript, patient_id)
+        
+        return {
+            "success": True,
+            "result": result,
+            "timestamp": datetime.utcnow().isoformat() + "Z"
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat() + "Z"
+        }
+
+def batch_process_transcripts(transcripts: List[Dict[str, str]]) -> Dict[str, Any]:
+    """
+    Process multiple transcripts in batch.
+    transcripts should be a list of dicts with 'transcript' and 'patient_id' keys.
+    """
+    results = []
+    
+    for item in transcripts:
+        transcript = item.get("transcript", "")
+        patient_id = item.get("patient_id", "")
+        
+        if not transcript or not patient_id:
+            results.append({
+                "success": False,
+                "error": "Missing transcript or patient_id",
+                "patient_id": patient_id
+            })
+            continue
+        
+        result = process_transcript_endpoint(transcript, patient_id)
+        results.append({
+            "patient_id": patient_id,
+            **result
+        })
+    
+    return {
+        "success": True,
+        "processed": len(results),
+        "results": results,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
 
 async def process_user_input_async(text: str) -> bool:
     """Async version of process_user_input for audio support"""

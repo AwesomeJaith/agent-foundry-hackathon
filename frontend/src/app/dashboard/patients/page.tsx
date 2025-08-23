@@ -52,7 +52,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { patientsDatabase } from "@/dummyDatabase/database";
+import { Patient } from "@/dummyDatabase/database";
 
 export const columns: ColumnDef<Patient>[] = [
   {
@@ -89,19 +89,24 @@ export const columns: ColumnDef<Patient>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="flex items-center space-x-3">
-        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-          <span className="text-sm font-semibold text-blue-600">
-            {row.getValue("firstName")?.toString().charAt(0)}
-          </span>
+    cell: ({ row }) => {
+      const firstName = row.getValue("firstName") as string | null;
+      return (
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <span className="text-sm font-semibold text-blue-600">
+              {firstName?.charAt(0) ?? "-"}
+            </span>
+          </div>
+          <div>
+            <div className="font-medium">{firstName ?? "-"}</div>
+            <div className="text-sm text-gray-500">
+              ID: {row.original.id ?? "-"}
+            </div>
+          </div>
         </div>
-        <div>
-          <div className="font-medium">{row.getValue("firstName")}</div>
-          <div className="text-sm text-gray-500">ID: {row.original.id}</div>
-        </div>
-      </div>
-    ),
+      );
+    },
   },
   {
     accessorKey: "lastName",
@@ -115,12 +120,15 @@ export const columns: ColumnDef<Patient>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
+    cell: ({ row }) => row.getValue("lastName") ?? "-",
   },
   {
     accessorKey: "dateOfBirth",
     header: "Date of Birth",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("dateOfBirth"));
+      const dob = row.getValue("dateOfBirth") as string | null;
+      if (!dob) return <span className="text-gray-400">N/A</span>;
+      const date = new Date(dob);
       const age = new Date().getFullYear() - date.getFullYear();
       return (
         <div>
@@ -135,7 +143,7 @@ export const columns: ColumnDef<Patient>[] = [
     header: "Gender",
     cell: ({ row }) => (
       <Badge variant="outline" className="capitalize">
-        {row.getValue("gender")}
+        {row.getValue("gender") ?? "-"}
       </Badge>
     ),
   },
@@ -143,7 +151,8 @@ export const columns: ColumnDef<Patient>[] = [
     accessorKey: "phoneNumber",
     header: "Phone Number",
     cell: ({ row }) => {
-      const phone = row.getValue("phoneNumber") as string;
+      const phone = (row.getValue("phoneNumber") as string) ?? "";
+      if (!phone) return <span className="text-gray-400">N/A</span>;
       const formatted = phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
       return <span className="font-mono text-sm">{formatted}</span>;
     },
@@ -152,7 +161,7 @@ export const columns: ColumnDef<Patient>[] = [
     accessorKey: "insuranceProvider",
     header: "Insurance",
     cell: ({ row }) => {
-      const provider = row.getValue("insuranceProvider") as string;
+      const provider = row.getValue("insuranceProvider") as string | null;
       return (
         <div>
           <div className="font-medium">{provider || "Self-pay"}</div>
@@ -165,14 +174,13 @@ export const columns: ColumnDef<Patient>[] = [
     accessorKey: "lastVisit",
     header: "Last Visit",
     cell: ({ row }) => {
-      const lastVisit = row.getValue("lastVisit") as string;
+      const lastVisit = row.getValue("lastVisit") as string | null;
       if (!lastVisit) return <span className="text-gray-400">No visits</span>;
 
       const date = new Date(lastVisit);
       const daysAgo = Math.floor(
         (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
       );
-
       return (
         <div>
           <div className="font-medium">{date.toLocaleDateString()}</div>
@@ -198,12 +206,14 @@ export const columns: ColumnDef<Patient>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(patient.id))}
+              onClick={() =>
+                navigator.clipboard.writeText(String(patient.id ?? "-"))
+              }
             >
               Copy patient ID
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/dashboard/patients/${patient.id}`}>
+              <Link href={`/dashboard/patients/${patient.id ?? ""}`}>
                 View details
               </Link>
             </DropdownMenuItem>
@@ -220,9 +230,18 @@ export const columns: ColumnDef<Patient>[] = [
   },
 ];
 
-const patientsData = patientsDatabase;
-
 export default function PatientTable() {
+  const [patientsData, setPatientsData] = React.useState<Patient[]>([]);
+
+  React.useEffect(() => {
+    fetch("http://localhost:8000/patients") // your FastAPI endpoint
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch patients data");
+        return res.json();
+      })
+      .then((json) => setPatientsData(json));
+  }, []);
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

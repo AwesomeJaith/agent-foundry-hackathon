@@ -28,7 +28,9 @@
     ],
     "allergies": [
       "Penicillin",
-      "Pollen"
+      "Pollen",
+      "penicillin",
+      "pollen"
     ],
     "medications": [
       "Albuterol inhaler",
@@ -36,7 +38,9 @@
     ],
     "conditions": [
       "Asthma",
-      "Seasonal allergies"
+      "Seasonal allergies",
+      "asthma",
+      "seasonal allergies"
     ],
     "lastVisit": "2024-01-15",
     "nextAppointment": "2024-03-20 at 2:00 PM",
@@ -51,7 +55,160 @@
         "doctor": "Dr. Johnson",
         "status": "completed"
       }
-    ]
+    ],
+    "symptomReports": [
+      {
+        "id": "1",
+        "timestamp": "2023-10-01T12:00:00Z",
+        "reportedBy": "patient",
+        "source": "visit",
+        "symptoms": [
+          {
+            "description": "persistent headaches",
+            "severity": "moderate",
+            "duration": "2-3 hours",
+            "frequency": "daily",
+            "triggers": [
+              "stress",
+              "looking at screens"
+            ]
+          },
+          {
+            "description": "poor sleep",
+            "severity": "mild",
+            "duration": "2 weeks",
+            "frequency": "nightly",
+            "triggers": [
+              "anxiety",
+              "work stress"
+            ]
+          }
+        ],
+        "aiAnalysis": {
+          "summary": "Symptoms appear to be stress-related.",
+          "urgency": "medium",
+          "suggestedActions": [
+            "schedule a follow-up appointment within a week"
+          ],
+          "confidence": 85,
+          "relatedConditions": [
+            "tension headaches",
+            "anxiety"
+          ]
+        },
+        "status": "new",
+        "assignedTo": null,
+        "notes": null,
+        "attachments": [
+          {
+            "type": "transcript",
+            "url": "/transcripts/1-20250823-162107",
+            "description": "Conversation transcript"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "timestamp": "2023-10-01T12:00:00Z",
+        "reportedBy": "patient",
+        "source": "visit",
+        "symptoms": [
+          {
+            "description": "persistent headaches",
+            "severity": "moderate",
+            "duration": "2-3 hours",
+            "frequency": "daily",
+            "triggers": [
+              "stress",
+              "looking at screens"
+            ]
+          },
+          {
+            "description": "poor sleep",
+            "severity": "mild",
+            "duration": "2 weeks",
+            "frequency": "nightly",
+            "triggers": [
+              "anxiety",
+              "work stress"
+            ]
+          }
+        ],
+        "aiAnalysis": {
+          "summary": "Symptoms appear to be stress-related.",
+          "urgency": "medium",
+          "suggestedActions": [
+            "schedule a follow-up appointment within a week"
+          ],
+          "confidence": 85,
+          "relatedConditions": [
+            "tension headaches",
+            "anxiety"
+          ]
+        },
+        "status": "new",
+        "assignedTo": null,
+        "notes": null,
+        "attachments": [
+          {
+            "type": "transcript",
+            "url": "/transcripts/1-20250823-161940",
+            "description": "Conversation transcript"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "timestamp": "2023-10-01T12:00:00Z",
+        "reportedBy": "patient",
+        "source": "visit",
+        "symptoms": [
+          {
+            "description": "persistent headaches",
+            "severity": "moderate",
+            "duration": "2-3 hours",
+            "frequency": "daily",
+            "triggers": [
+              "stress",
+              "looking at screens"
+            ]
+          },
+          {
+            "description": "poor sleep",
+            "severity": "mild",
+            "duration": "2 weeks",
+            "frequency": "nightly",
+            "triggers": [
+              "anxiety",
+              "work stress"
+            ]
+          }
+        ],
+        "aiAnalysis": {
+          "summary": "Symptoms appear to be stress-related.",
+          "urgency": "medium",
+          "suggestedActions": [
+            "Schedule a follow-up appointment within a week."
+          ],
+          "confidence": 85,
+          "relatedConditions": [
+            "tension headaches",
+            "anxiety"
+          ]
+        },
+        "status": "new",
+        "assignedTo": null,
+        "notes": null,
+        "attachments": [
+          {
+            "type": "transcript",
+            "url": "/transcripts/1-20250823-161910",
+            "description": "Conversation transcript"
+          }
+        ]
+      }
+    ],
+    "aiSummary": "Patient reporting persistent headaches, poor sleep. Follow-up recommended within 1-2 weeks."
   },
   {
     "id": "2",
@@ -85,7 +242,8 @@
     ],
     "medications": [
       "Lisinopril 10mg",
-      "Atorvastatin 20mg"
+      "Atorvastatin 20mg",
+      "Lisinopril 10mg daily"
     ],
     "conditions": [
       "Hypertension",
@@ -99,7 +257,54 @@
         "doctor": "Dr. Williams",
         "status": "completed"
       }
-    ]
+    ],
+    "symptomReports": [
+      {
+        "id": "1",
+        "timestamp": "2023-10-03T12:00:00Z",
+        "reportedBy": "patient",
+        "source": "chat",
+        "symptoms": [
+          {
+            "description": "dizziness when standing up quickly",
+            "severity": "mild",
+            "duration": "3 days",
+            "frequency": "upon standing",
+            "triggers": []
+          },
+          {
+            "description": "elevated blood pressure readings",
+            "severity": "moderate",
+            "duration": "3 days",
+            "frequency": "daily",
+            "triggers": []
+          }
+        ],
+        "aiAnalysis": {
+          "summary": "Patient reports elevated blood pressure and mild dizziness.",
+          "urgency": "medium",
+          "suggestedActions": [
+            "Adjust Lisinopril dosage to 15mg daily",
+            "Monitor blood pressure readings closely"
+          ],
+          "confidence": 85,
+          "relatedConditions": [
+            "hypertension"
+          ]
+        },
+        "status": "new",
+        "assignedTo": null,
+        "notes": null,
+        "attachments": [
+          {
+            "type": "transcript",
+            "url": "/transcripts/2-20250823-162113",
+            "description": "Conversation transcript"
+          }
+        ]
+      }
+    ],
+    "aiSummary": "Patient reporting dizziness when standing up quickly, elevated blood pressure readings. Follow-up recommended within 1-2 weeks."
   },
   {
     "id": "3",
@@ -130,9 +335,14 @@
     ],
     "allergies": [],
     "medications": [
-      "Birth control pill"
+      "Birth control pill",
+      "Sumatriptan",
+      "Sertraline"
     ],
-    "conditions": [],
+    "conditions": [
+      "migraines",
+      "anxiety"
+    ],
     "lastVisit": null,
     "nextAppointment": "tomorrow at 3:00 PM",
     "appointments": [
@@ -141,7 +351,64 @@
         "doctor": "Dr. Brown",
         "status": "booked"
       }
-    ]
+    ],
+    "symptomReports": [
+      {
+        "id": "1",
+        "timestamp": "2023-10-01T12:00:00Z",
+        "reportedBy": "patient",
+        "source": "chat",
+        "symptoms": [
+          {
+            "description": "migraines with aura",
+            "severity": "severe",
+            "duration": "6 hours",
+            "frequency": "3 times this week",
+            "triggers": [
+              "light",
+              "sound"
+            ]
+          },
+          {
+            "description": "nausea",
+            "severity": "moderate",
+            "duration": null,
+            "frequency": null,
+            "triggers": []
+          },
+          {
+            "description": "vomiting",
+            "severity": "moderate",
+            "duration": null,
+            "frequency": null,
+            "triggers": []
+          }
+        ],
+        "aiAnalysis": {
+          "summary": "Patient reports severe migraines with accompanying symptoms of nausea and vomiting. Current medication is ineffective.",
+          "urgency": "high",
+          "suggestedActions": [
+            "Consider preventive medication"
+          ],
+          "confidence": 85,
+          "relatedConditions": [
+            "migraines",
+            "anxiety"
+          ]
+        },
+        "status": "new",
+        "assignedTo": null,
+        "notes": null,
+        "attachments": [
+          {
+            "type": "transcript",
+            "url": "/transcripts/3-20250823-162119",
+            "description": "Conversation transcript"
+          }
+        ]
+      }
+    ],
+    "aiSummary": "Patient experiencing migraines with aura, nausea, vomiting. Urgent attention recommended."
   },
   {
     "id": "4",

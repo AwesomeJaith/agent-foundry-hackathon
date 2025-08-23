@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { patientsDatabase } from "@/dummyDatabase/database";
+import { Patient } from "@/dummyDatabase/database";
 import {
   Card,
   CardContent,
@@ -32,13 +32,24 @@ import {
   Sparkles,
   CheckCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function PatientDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const patientId = params.patientId;
+  const [patientsData, setPatientsData] = useState<Patient[]>([]);
 
-  const patient = patientsDatabase.find((p) => p.id === patientId);
+  useEffect(() => {
+    fetch("http://localhost:8000/patients") // your FastAPI endpoint
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch patients data");
+        return res.json();
+      })
+      .then((json) => setPatientsData(json));
+  }, []);
+
+  const patient = patientsData.find((p) => p.id === patientId);
 
   if (!patient) {
     return (
@@ -56,7 +67,8 @@ export default function PatientDetailsPage() {
     );
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -64,16 +76,16 @@ export default function PatientDetailsPage() {
     });
   };
 
-  const formatPhone = (phone: string) => {
+  const formatPhone = (phone?: string) => {
+    if (!phone) return "N/A";
     const cleaned = phone.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-      return `(${match[1]}) ${match[2]}-${match[3]}`;
-    }
+    if (match) return `(${match[1]}) ${match[2]}-${match[3]}`;
     return phone;
   };
 
-  const calculateAge = (dateOfBirth: string) => {
+  const calculateAge = (dateOfBirth?: string) => {
+    if (!dateOfBirth) return "N/A";
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -81,18 +93,13 @@ export default function PatientDetailsPage() {
     if (
       monthDiff < 0 ||
       (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    )
       age--;
-    }
     return age;
   };
 
   const handleMarkAsAddressed = (reportId: string) => {
-    // In a real application, this would update the database
-    // For now, we'll just show an alert
-    alert(
-      `Issue ${reportId} marked as addressed. In a real application, this would update the database.`
-    );
+    alert(`Issue ${reportId} marked as addressed.`);
   };
 
   return (
