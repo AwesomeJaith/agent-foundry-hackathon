@@ -36,41 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-
-const data: Patient[] = [
-  {
-    id: 1,
-    firstName: "Emily",
-    lastName: "Johnson",
-    dateOfBirth: "1990-05-12",
-    gender: "female",
-    phoneNumber: "555-123-4567",
-  },
-  {
-    id: 2,
-    firstName: "Michael",
-    lastName: "Anderson",
-    dateOfBirth: "1984-11-23",
-    gender: "male",
-    phoneNumber: "555-234-5678",
-  },
-  {
-    id: 3,
-    firstName: "Sophia",
-    lastName: "Martinez",
-    dateOfBirth: "2001-03-17",
-    gender: "female",
-    phoneNumber: "555-345-6789",
-  },
-  {
-    id: 4,
-    firstName: "Daniel",
-    lastName: "Lee",
-    dateOfBirth: "1978-07-04",
-    gender: "male",
-    phoneNumber: "555-456-7890",
-  },
-];
+import { patientsDatabase } from "@/dummyDatabase/database";
 
 export const columns: ColumnDef<Patient>[] = [
   {
@@ -157,7 +123,7 @@ export const columns: ColumnDef<Patient>[] = [
             >
               Copy patient ID
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href={`/dashboard/patients/${patient.id}`}>
                 View details
               </Link>
@@ -170,6 +136,8 @@ export const columns: ColumnDef<Patient>[] = [
   },
 ];
 
+const patientsData = patientsDatabase;
+
 export default function PatientTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -180,7 +148,7 @@ export default function PatientTable() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: patientsData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
