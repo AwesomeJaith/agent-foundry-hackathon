@@ -433,5 +433,177 @@
         "status": "completed"
       }
     ]
+  },
+  {
+    "id": "6",
+    "firstName": "Jack",
+    "lastName": "Miller",
+    "dateOfBirth": "",
+    "gender": "male",
+    "phoneNumber": "",
+    "email": "",
+    "address": null,
+    "insuranceProvider": "",
+    "memberId": "",
+    "policyHolder": "Jack Miller",
+    "paymentOption": "",
+    "phoneCalls": 1,
+    "emails": 0,
+    "familyHistory": "Father: High blood pressure, Mother: No significant history",
+    "medicalHistory": "Generally healthy, occasional seasonal allergies",
+    "consentForms": ["Treatment Consent", "HIPAA Privacy Notice"],
+    "allergies": ["None known"],
+    "medications": ["None currently"],
+    "conditions": ["Fever", "Upper respiratory infection symptoms", "Headache"],
+    "currentSymptoms": [
+      "Fever for few days",
+      "High temperature",
+      "Cough",
+      "Cold symptoms",
+      "Heavy headache"
+    ],
+    "symptomDuration": "Few days",
+    "lastVisit": null,
+    "nextAppointment": "tomorrow at 9:00 AM",
+    "appointments": [
+      {
+        "when": "tomorrow at 9:00 AM",
+        "doctor": "Dr. Rodriguez",
+        "status": "booked",
+        "reason": "Fever, cough, cold symptoms, headache"
+      }
+    ],
+    "conversationHistory": [
+      {
+        "sessionId": "session_2024_03_15_001",
+        "timestamp": "2024-03-15T10:30:00Z",
+        "transcript": [
+          {
+            "role": "assistant",
+            "content": "Hello! I'm your medical case manager. How can I help you today?",
+            "timestamp": "2024-03-15T10:30:00Z"
+          },
+          {
+            "role": "user",
+            "content": "Hi, I've been feeling really sick. I have a fever for few days now and high temperature with cough and cold. I also have a heavy headache.",
+            "timestamp": "2024-03-15T10:30:15Z"
+          },
+          {
+            "role": "assistant",
+            "content": "I'm sorry to hear you're not feeling well. Those symptoms definitely warrant medical attention. Can I get your name to schedule an appointment?",
+            "timestamp": "2024-03-15T10:30:16Z"
+          },
+          {
+            "role": "user",
+            "content": "My name is Jack Miller",
+            "timestamp": "2024-03-15T10:30:25Z"
+          },
+          {
+            "role": "assistant",
+            "content": "Thank you, Jack. Can I get your phone number for our records?",
+            "timestamp": "2024-03-15T10:30:26Z"
+          },
+          {
+            "role": "user",
+            "content": "Sure, it's 5307155487",
+            "timestamp": "2024-03-15T10:30:35Z"
+          },
+          {
+            "role": "assistant",
+            "content": "Perfect. When would you like to come in? You mentioned wanting to come tomorrow at 9am - is that still your preference?",
+            "timestamp": "2024-03-15T10:30:36Z"
+          },
+          {
+            "role": "user",
+            "content": "Yes, tomorrow at 9am would be great. I really need to see a doctor soon.",
+            "timestamp": "2024-03-15T10:30:45Z"
+          },
+          {
+            "role": "assistant",
+            "content": "Absolutely, Jack. I've scheduled you for tomorrow at 9:00 AM with Dr. Rodriguez. Please bring a valid ID and your insurance card. Given your symptoms of fever, cough, cold, and headache, the doctor will be able to examine you and provide appropriate treatment. Is there anything else I can help you with?",
+            "timestamp": "2024-03-15T10:30:46Z"
+          },
+          {
+            "role": "user",
+            "content": "No, that's perfect. Thank you so much!",
+            "timestamp": "2024-03-15T10:30:55Z"
+          }
+        ],
+        "summary": "Patient Jack Miller called with fever, high temperature, cough, cold symptoms, and heavy headache lasting few days. Scheduled appointment for tomorrow at 9:00 AM with Dr. Rodriguez. Collected patient information including phone number 5307155487.",
+        "intents": ["symptoms", "identify", "collect_info", "book_appointment"],
+        "audioMode": true
+      }
+    ],
+    "symptomReports": [
+      {
+        "id": "1",
+        "timestamp": "2024-03-15T10:30:00Z",
+        "reportedBy": "patient",
+        "source": "call",
+        "symptoms": [
+          {
+            "description": "fever",
+            "severity": "moderate",
+            "duration": "few days",
+            "frequency": "constant",
+            "triggers": []
+          },
+          {
+            "description": "high temperature",
+            "severity": "moderate",
+            "duration": "few days",
+            "frequency": "constant",
+            "triggers": []
+          },
+          {
+            "description": "cough",
+            "severity": "mild",
+            "duration": "few days",
+            "frequency": "intermittent",
+            "triggers": []
+          },
+          {
+            "description": "cold symptoms",
+            "severity": "mild",
+            "duration": "few days",
+            "frequency": "constant",
+            "triggers": []
+          },
+          {
+            "description": "heavy headache",
+            "severity": "moderate",
+            "duration": "few days",
+            "frequency": "daily",
+            "triggers": []
+          }
+        ],
+        "aiAnalysis": {
+          "summary": "Patient reports fever, cough, cold symptoms, and headache lasting several days. Possible upper respiratory infection.",
+          "urgency": "medium",
+          "suggestedActions": [
+            "Proceed with scheduled appointment for evaluation",
+            "Monitor temperature and hydration status",
+            "Seek urgent care if symptoms worsen (e.g., shortness of breath, chest pain)"
+          ],
+          "confidence": 80,
+          "relatedConditions": [
+            "upper respiratory infection",
+            "influenza",
+            "viral fever"
+          ]
+        },
+        "status": "new",
+        "assignedTo": null,
+        "notes": null,
+        "attachments": [
+          {
+            "type": "transcript",
+            "url": "/transcripts/6-20250315-103000",
+            "description": "Call transcript"
+          }
+        ]
+      }
+    ],
+    "aiSummary": "Patient experiencing fever, cough, cold symptoms, and headache for several days. Appointment scheduled for evaluation; urgent care advised if symptoms worsen."
   }
 ]

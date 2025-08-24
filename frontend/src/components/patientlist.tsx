@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Patient } from "@/dummyDatabase/database";
 
 interface PatientListProps {
   patients: Patient[];
